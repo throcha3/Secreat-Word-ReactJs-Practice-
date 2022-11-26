@@ -1,23 +1,21 @@
-
 //CSS
-import './App.css';
+import "./App.css";
 
 //React
-import { useCallback, useEffect, useState} from "react";
+import { useCallback, useEffect, useState } from "react";
 
 //Components
-import StartScreen from './components/StartScreen';
-import Game from './components/Game';
-import GameOver from './components/GameOver';
+import StartScreen from "./components/StartScreen";
+import Game from "./components/Game";
+import GameOver from "./components/GameOver";
 
-import { wordsList } from './data/words';
-
+import { wordsList } from "./data/words";
 
 const stages = [
-  {id:1, name: "start"},
-  {id:2, name: "game"},
-  {id:3, name: "end"}
-]
+  { id: 1, name: "start" },
+  { id: 2, name: "game" },
+  { id: 3, name: "end" },
+];
 
 function App() {
   const [gameStage, setGameStage] = useState(stages[0].name);
@@ -32,19 +30,19 @@ function App() {
   const [guesses, setGuesses] = useState(3);
   const [score, setScore] = useState(0);
 
-  const pickWordAndCategory  = () => {
+  const pickWordAndCategory = () => {
     const categories = Object.keys(words);
-    const category = categories[Math.floor(Math.random() * Object.keys(categories).length)];
+    const category =
+      categories[Math.floor(Math.random() * Object.keys(categories).length)];
 
-    const word = words[category][Math.floor(Math.random() *  words[category].length)];
+    const word =
+      words[category][Math.floor(Math.random() * words[category].length)];
 
-    return {word, category};
-  }
-
-
+    return { word, category };
+  };
 
   const startGame = () => {
-    const {word, category} = pickWordAndCategory();
+    const { word, category } = pickWordAndCategory();
 
     let wordLetters = word.split("");
 
@@ -57,21 +55,21 @@ function App() {
     setPickedCategory(category);
     setPickedWord(word);
     setLetters(wordLetters);
-  }
+  };
 
   //process the letter input
   const verifyLetter = () => {
     setGameStage(stages[2].name);
-  }
+  };
 
   const retry = () => {
     setGameStage(stages[0].name);
-  }
+  };
 
   return (
     <div className="App">
-      {gameStage=== "start" && <StartScreen startGame={startGame} />}
-      {gameStage=== "game" && (
+      {gameStage === "start" && <StartScreen startGame={startGame} />}
+      {gameStage === "game" && (
         <Game
           verifyLetter={verifyLetter}
           pickedWord={pickedWord}
@@ -81,8 +79,9 @@ function App() {
           wrongLetters={wrongLetters}
           guesses={guesses}
           score={score}
-        />)}
-      {gameStage=== "end" && <GameOver retry={retry}/>}
+        />
+      )}
+      {gameStage === "end" && <GameOver retry={retry} />}
     </div>
   );
 }
