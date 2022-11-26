@@ -1,35 +1,62 @@
+import { useState } from "react";
 import "./Game.css";
 
-const Game = ({verifyLetter}) => {
+const Game = ({
+  verifyLetter,
+  pickedCategory,
+  pickedWord,
+  letters,
+  guessedLetters,
+  wrongLetters,
+  guesses,
+  score,
+}) => {
+  const [letter, setLetter] = useState("");
+
   return (
     <div className="game">
       <p className="points">
-        <span>Points: 000</span>
+        <span>Points: {score}</span>
       </p>
       <h1>Guess the word:</h1>
       <h3 className="tip">
-        Tip about the word: <span>Tip...</span>
+        Tip about the word: <span>{pickedCategory}</span>
       </h3>
-      <p>You still have XX tries</p>
+      <p>You still have {guesses} tries</p>
       <div className="wordContainer">
-        <span className="letter">A</span>
-        <span className="blankSquare"></span>
+        {letters.map((letter, i) =>
+          guessedLetters.includes(letter) ? (
+            <span key={i} className="letter">
+              {letter}
+            </span>
+          ) : (
+            <span key={i} className="blankSquare"></span>
+          )
+        )}
       </div>
 
       <div className="letterContainer">
         <p>Try to guess a letter of the word:</p>
         <form>
-          <input type="text" name="letter" maxLength="1" required/>
-          <button>Play!</button>
+          <input
+            type="text"
+            name="letter"
+            maxLength="1"
+            required
+            onChange={(e) => setLetter(e.target.value)}
+            value={letter}
+          />
+          <button>Play! </button>
         </form>
       </div>
       <div className="wrongLettersContainer">
         <p>Already tried letters:</p>
-        <span>a,</span>
-        <span>t,</span>
+        {wrongLetters.map((letter, i) => (
+          <span key={i}>{letter},</span>
+        ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Game
+export default Game;
