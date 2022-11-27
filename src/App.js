@@ -30,6 +30,8 @@ function App() {
   const [guesses, setGuesses] = useState(3);
   const [score, setScore] = useState(0);
 
+  const guessesQty = 3;
+
   const pickWordAndCategory = () => {
     const categories = Object.keys(words);
     const category =
@@ -84,8 +86,26 @@ function App() {
   };
 
   const retry = () => {
+    setScore(0);
+    setGuesses(guessesQty);
     setGameStage(stages[0].name);
   };
+
+  // clear letters state
+  const clearLettersStates = () => {
+    setGuessedLetters([]);
+    setWrongLetters([]);
+  };
+
+  // check if guesses ended
+  useEffect(() => {
+    if (guesses === 0) {
+      // game over and reset all states
+      clearLettersStates();
+
+      setGameStage(stages[2].name);
+    }
+  }, [guesses]);
 
   return (
     <div className="App">
