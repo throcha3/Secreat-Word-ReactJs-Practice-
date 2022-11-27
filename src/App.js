@@ -32,7 +32,7 @@ function App() {
 
   const guessesQty = 3;
 
-  const pickWordAndCategory = () => {
+  const pickWordAndCategory = useCallback(() => {
     const categories = Object.keys(words);
     const category =
       categories[Math.floor(Math.random() * Object.keys(categories).length)];
@@ -41,9 +41,10 @@ function App() {
       words[category][Math.floor(Math.random() * words[category].length)];
 
     return { word, category };
-  };
+  }, [words]);
 
-  const startGame = () => {
+  const startGame = useCallback(() => {
+    clearLettersStates();
     const { word, category } = pickWordAndCategory();
 
     let wordLetters = word.split("");
@@ -57,10 +58,12 @@ function App() {
     setPickedCategory(category);
     setPickedWord(word);
     setLetters(wordLetters);
-  };
+  }, [pickWordAndCategory]);
 
   //process the letter input
   const verifyLetter = (letter) => {
+    const normalizedLetter = letter.toLowerCase();
+
     // check if letter has already been utilized
     if (
       guessedLetters.includes(normalizedLetter) ||
@@ -73,7 +76,7 @@ function App() {
     if (letters.includes(normalizedLetter)) {
       setGuessedLetters((actualGuessedLetters) => [
         ...actualGuessedLetters,
-        letter,
+        normalizedLetter,
       ]);
     } else {
       setWrongLetters((actualWrongLetters) => [
@@ -99,13 +102,30 @@ function App() {
 
   // check if guesses ended
   useEffect(() => {
-    if (guesses === 0) {
+    if (guesses <= 0) {
       // game over and reset all states
       clearLettersStates();
 
       setGameStage(stages[2].name);
     }
   }, [guesses]);
+
+  //win condition
+  useEffect(() => {
+    const uniqueLetters = [...new Set(letters)];
+
+    console.log(uniqueLetters);
+    console.log(guessedLetters);
+
+    // win condition
+    if (guessedLetters.length === uniqueLetters.length) {
+      // add score
+      setScore((actualScore) => (actualScore += 100));
+
+      // restart game with new word
+      startGame();
+    }
+  }, [guessedLetters, letters, startGame]);
 
   return (
     <div className="App">
@@ -122,7 +142,7 @@ function App() {
           score={score}
         />
       )}
-      {gameStage === "end" && <GameOver retry={retry} />}
+      {gameStage === "end" && <GameOver retry={retry} score={score} />}
     </div>
   );
 }
